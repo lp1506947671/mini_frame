@@ -1,16 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import re
 
 
 def index():
     with open("./templates/index.html", encoding="utf-8") as f:
         content = f.read()
+    my_stock_info = "哈哈哈,这是你本月的名称"
+    content = re.sub(r"\{%content%\}", my_stock_info, content)
     return content
 
 
 def center():
     with open("./templates/center.html", encoding="utf-8") as f:
-        return f.read()
+        content=f.read()
+    my_stock_info = "这是从mysql中查出的数据"
+    content = re.sub(r"\{%content%\}", my_stock_info, content)
+    return content
 
 
 def application(env, start_response):
@@ -25,4 +31,4 @@ def application(env, start_response):
     elif file_name == "/center.py":
         return center().encode('utf-8')
     else:
-        return 'Hello World! 我爱你中国....'.encode("gbk")
+        return 'Hello 我爱你中国'.encode("gbk")
