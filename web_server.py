@@ -2,11 +2,9 @@
 # -*- coding: utf-8 -*-
 """
 实现功能:
-替换{ content }内容
-动态添加port和mini_frame:application
-添加web服务器器的配置文件 config.ini
+为min_frame添加路由功能
 author:Jason
-date:20200829
+date:20200830
 """
 import configparser
 import os
@@ -86,9 +84,9 @@ class WSGIServer(object):
                 header += "%s:%s\r\n" % (temp[0], temp[1])
 
             header += "\r\n"
-            response = header.encode('utf-8') + body
+            response = header + body
             # 发送response给浏览器
-            new_socket.send(response)
+            new_socket.send(response.encode('utf-8'))
         # 关闭套接
         new_socket.close()
 
