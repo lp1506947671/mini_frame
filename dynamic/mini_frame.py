@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""
+实现功能:
+路由支持正则
+author:Jason
+date:20200909
+"""
 import re
 from pymysql import connect
 
@@ -16,6 +22,11 @@ def router(url):
         return call_func
 
     return set_func
+
+
+@router(r"/add/\d+\.html")
+def add_focus():
+    return "add pk ..."
 
 
 @router("/index.html")
@@ -65,13 +76,14 @@ def center():
     with open("./templates/center.html", encoding="utf-8") as f:
         content = f.read()
     # 建立连接
-    conn = connect(host="localhost", port=3306, user="root", password="123456",database="stock_db", charset="utf8")
+    conn = connect(host="localhost", port=3306, user="root", password="123456", database="stock_db", charset="utf8")
     # 获取游标
     css = conn.cursor()
     # 执行sql
-    css.execute("select i.code,i.short,i.chg,i.turnover,i.price,i.highs,f.note_info from info as i inner join focus as f on i.id=f.info_id;")
+    css.execute(
+        "select i.code,i.short,i.chg,i.turnover,i.price,i.highs,f.note_info from info as i inner join focus as f on i.id=f.info_id;")
     # 获取sql执行数据
-    stock_info=css.fetchall()
+    stock_info = css.fetchall()
     # 关闭游标连接
     css.close()
     # 关闭数据库连接
@@ -94,9 +106,10 @@ def center():
                </td>
            </tr>
        """
-    html=""
+    html = ""
     for line_info in stock_info:
-        html+=tr_template % (line_info[0],line_info[1],line_info[2],line_info[3],line_info[4],line_info[5],line_info[6],)
+        html += tr_template % (
+        line_info[0], line_info[1], line_info[2], line_info[3], line_info[4], line_info[5], line_info[6],)
     content = re.sub(r"\{%content%\}", html, content)
     return content
 
@@ -107,6 +120,10 @@ def application(env, start_response):
     start_response(status, response_headers)
     file_name = env['PATH_INFO']
     try:
+        for url, func in URL_FUNC_DICT.items():
+            ret = re.match(url, file_name)
+            if ret:
+                return func()
         return URL_FUNC_DICT[file_name]()
     except Exception as e:
-        return "An exception is made%s"%e
+        return "An exception is made%s" % e

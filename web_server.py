@@ -1,11 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
-实现功能:
-接入mysql数据库实现数据交互
-author:Jason
-date:20200906
-"""
 import configparser
 import os
 import socket
