@@ -7,6 +7,7 @@ author:Jason
 date:20200911
 """
 import re
+import urllib.parse
 from pymysql import connect
 
 URL_FUNC_DICT = dict()
@@ -63,10 +64,11 @@ def show_update_info(ret):
     return content
 
 
-@router(r"/update_info/(\d+)(.{0,32})\.html")
+@router(r"/update_info/(\d+)/(.{0,32})\.html")
 def save_update_info(ret):
     stock_code = ret.group(1)
     comment = ret.group(2)
+    comment = urllib.parse.unquote(comment)
     # 创建Connection连接
     conn = connect(host="localhost", port=3306, user="root", password="123456", database="stock_db", charset="utf8")
     # 获得Cursor对象
