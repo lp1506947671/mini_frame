@@ -12,7 +12,7 @@ log_path = r'D:\Dpan\Document\pycharm_project\mini_frame\output'
 class Log:
     def __init__(self):
         self.now = time.strftime("%Y-%m-%d--%H-%M-%S")
-        self.logname = os.path.join(log_path, '{0}.log'.format(self.now))
+        self.logname = os.path.join(log_path, "run.log")
 
     def __printconsole(self, level, message):
         # 创建一个logger
@@ -25,7 +25,7 @@ class Log:
         ch = logging.StreamHandler()
         ch.setLevel(logging.DEBUG)
         # 定义handler的输出格式
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        formatter = logging.Formatter('[%(asctime)s][%(name)s][%(levelname)s]:%(message)s')
         fh.setFormatter(formatter)
         ch.setFormatter(formatter)
         # 给logger添加handler
