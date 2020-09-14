@@ -2,16 +2,19 @@
 # -*- coding: utf-8 -*-
 """
 实现功能:
-实现数据的增删改查
+实现日志记录
 author:Jason
-date:20200911
+date:20200914
 """
+
 import re
 import urllib.parse
 from pymysql import connect
 
-URL_FUNC_DICT = dict()
+from dynamic.logger import Log
 
+URL_FUNC_DICT = dict()
+a=Log()
 
 def router(url, ):
     def set_func(func):
@@ -59,7 +62,7 @@ def show_update_info(ret):
     # 关闭连接连接
     conn.close()
     # 生成替换数据
-    content = re.sub(r"\{%note_info%\}",stock_info[0], content)
+    content = re.sub(r"\{%note_info%\}", stock_info[0], content)
     content = re.sub(r"\{%code%\}", stock_id, content)
     return content
 
@@ -73,8 +76,8 @@ def save_update_info(ret):
     conn = connect(host="localhost", port=3306, user="root", password="123456", database="stock_db", charset="utf8")
     # 获得Cursor对象
     css = conn.cursor()
-    sql="""update focus set note_info=%s where info_id =(select id from info where code=%s)"""
-    css.execute(sql,(comment,stock_code))
+    sql = """update focus set note_info=%s where info_id =(select id from info where code=%s)"""
+    css.execute(sql, (comment, stock_code))
     conn.commit()
     css.close()
     conn.close()
@@ -206,10 +209,12 @@ def application(env, start_response):
     response_headers = [('Content-Type', 'text/html')]
     start_response(status, response_headers)
     file_name = env['PATH_INFO']
+    a.info(file_name)
     try:
         for url, func in URL_FUNC_DICT.items():
             ret = re.match(url, file_name)
             if ret:
                 return func(ret)
     except Exception as e:
+        a.warning("not func")
         return "An exception is made %s" % e
